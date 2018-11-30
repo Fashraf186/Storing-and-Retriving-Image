@@ -1,0 +1,59 @@
+﻿@model IEnumerable<FileUpload.Models.Information>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.FirstName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.LastName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ProfilePic)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Path)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.FirstName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.LastName)
+        </td>
+
+        <td> @* This is the display picture tag using binarydata method  *@ 
+
+            @if (item.ProfilePic != null)
+            {
+                var base64 = Convert.ToBase64String(item.ProfilePic);   
+                var imgsrc = string.Format("data:image/jpg;base64,{0}", base64);
+                <img src = "@imgsrc"
+                    style = "max-width:100px;max-height:500px" />
+            }
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Path)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.PersonID }) |
+            @Html.ActionLink("Details", "Details", new { id=item.PersonID }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.PersonID })
+        </td>
+    </tr>
+}
+
+</table>
