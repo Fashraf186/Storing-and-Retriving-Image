@@ -46,7 +46,13 @@
             }
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Path)
+            @if (item.Path != null)
+
+            {
+                <img src="@item.Path" class="img-responsive"
+            width = "100"
+            height = "100" />
+            }
         </td>
         <td>
             @Html.ActionLink("Edit", "Edit", new { id=item.PersonID }) |

@@ -46,14 +46,23 @@ namespace FileUpload.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "PersonID,FirstName,LastName")] Information information, HttpPostedFileBase File1)   //HTTPPostedFilebase is use to post file in the database
+        public ActionResult Create([Bind(Include = "PersonID,FirstName,LastName")] Information information, HttpPostedFileBase File1, HttpPostedFileBase File2)   //HTTPPostedFilebase is use to post file in the database
         {
             if (ModelState.IsValid)
             {
                 if (File1 != null && File1.ContentLength > 0)
                 {
+                    Random R = new Random();
                     information.ProfilePic = new byte[File1.ContentLength]; // file1 to store image in binary formate  
                     File1.InputStream.Read(information.ProfilePic, 0, File1.ContentLength);
+
+                    string ImageName = System.IO.Path.GetFileName(File2.FileName); //file2 to store path and url  
+                    string physicalPath = Server.MapPath("~/imgs/" + ImageName);
+                    // save image in folder  
+                    File2.SaveAs(physicalPath);
+                    // store path in database  
+                    information.Path = "imgs/" + ImageName;
+
                     db.Information.Add(information);
                     db.SaveChanges();
                     return RedirectToAction("Index");
@@ -84,14 +93,27 @@ namespace FileUpload.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "PersonID,FirstName,LastName,ProfilePic,Path")] Information information)
+        public ActionResult Edit([Bind(Include = "PersonID,FirstName,LastName")] Information information, HttpPostedFileBase File1)
         {
+
             if (ModelState.IsValid)
             {
-                db.Entry(information).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                if (File1 != null && File1.ContentLength > 0)
+                {
+                    information.ProfilePic = new byte[File1.ContentLength]; // file1 to store image in binary formate  
+                    File1.InputStream.Read(information.ProfilePic, 0, File1.ContentLength);
+
+
+
+
+                    db.Entry(information).State = EntityState.Modified;
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
+                }
+
             }
+               
+            
             return View(information);
         }
 
